@@ -90,12 +90,6 @@
       background: gold;
       color: black;
     }
-    footer {
-      margin-top: auto;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: #bbb;
-    }
   </style>
 </head>
 <body>
@@ -110,16 +104,16 @@
   <div class="section">
     <h2>Обери кількість зірок</h2>
     <div class="options">
-      <div class="option-button" onclick="selectStars('50⭐ – 45 грн')">50⭐ – 45 грн</div>
-      <div class="option-button" onclick="selectStars('100⭐ – 85 грн')">100⭐ – 85 грн</div>
-      <div class="option-button" onclick="selectStars('200⭐ – 170 грн')">200⭐ – 170 грн</div>
-      <div class="option-button" onclick="selectStars('300⭐ – 250 грн')">300⭐ – 250 грн</div>
-      <div class="option-button" onclick="selectStars('400⭐ – 330 грн')">400⭐ – 330 грн</div>
-      <div class="option-button" onclick="selectStars('500⭐ – 400 грн')">500⭐ – 400 грн</div>
-      <div class="option-button" onclick="selectStars('600⭐ – 480 грн')">600⭐ – 480 грн</div>
-      <div class="option-button" onclick="selectStars('800⭐ – 640 грн')">800⭐ – 640 грн</div>
-      <div class="option-button" onclick="selectStars('900⭐ – 700 грн')">900⭐ – 700 грн</div>
-      <div class="option-button" onclick="selectStars('1000⭐ – 800 грн')">1000⭐ – 800 грн</div>
+      <div class="option-button" onclick="selectStars('50⭐')">50⭐ – 45 грн</div>
+      <div class="option-button" onclick="selectStars('100⭐')">100⭐ – 85 грн</div>
+      <div class="option-button" onclick="selectStars('200⭐')">200⭐ – 170 грн</div>
+      <div class="option-button" onclick="selectStars('300⭐')">300⭐ – 250 грн</div>
+      <div class="option-button" onclick="selectStars('400⭐')">400⭐ – 330 грн</div>
+      <div class="option-button" onclick="selectStars('500⭐')">500⭐ – 400 грн</div>
+      <div class="option-button" onclick="selectStars('600⭐')">600⭐ – 480 грн</div>
+      <div class="option-button" onclick="selectStars('800⭐')">800⭐ – 640 грн</div>
+      <div class="option-button" onclick="selectStars('900⭐')">900⭐ – 700 грн</div>
+      <div class="option-button" onclick="selectStars('1000⭐')">1000⭐ – 800 грн</div>
       <div class="option-button" onclick="toggleCustomInput()">🔢 Ввести власну кількість</div>
     </div>
     <div class="input-container" id="custom-quantity" style="display: none;">
@@ -140,10 +134,40 @@
 
   <script>
     let selectedStars = '';
+    let selectedPrice = 0;
 
     function selectStars(stars) {
       selectedStars = stars;
-      alert(`Ви вибрали: ${stars}`);
+      selectedPrice = getPrice(stars);
+      document.getElementById('custom-quantity').style.display = 'none';
+      alert(`Ви вибрали: ${stars}. Ціна: ${selectedPrice} грн`);
+    }
+
+    function getPrice(stars) {
+      switch (stars) {
+        case '50⭐':
+          return 45;
+        case '100⭐':
+          return 85;
+        case '200⭐':
+          return 170;
+        case '300⭐':
+          return 250;
+        case '400⭐':
+          return 330;
+        case '500⭐':
+          return 400;
+        case '600⭐':
+          return 480;
+        case '800⭐':
+          return 640;
+        case '900⭐':
+          return 700;
+        case '1000⭐':
+          return 800;
+        default:
+          return 0;
+      }
     }
 
     function toggleCustomInput() {
@@ -157,8 +181,9 @@
         alert('Будь ласка, введіть правильну кількість зірок.');
         return;
       }
-      selectedStars = `${customAmount}⭐ – ${customAmount * 0.9} грн`; // Приклад ціни
-      alert(`Ви вибрали: ${selectedStars}`);
+      selectedStars = `${customAmount}⭐`;
+      selectedPrice = customAmount * 0.9; // Розрахунок ціни, якщо це власна кількість
+      alert(`Ви вибрали: ${selectedStars}.`);
     }
 
     function submitOrder() {
@@ -167,8 +192,20 @@
         alert('Будь ласка, введіть ваш Telegram юзернейм!');
         return;
       }
+      sendToTelegram(username);
       alert(`Замовлення підтверджено! З вами зв'яжуться через Telegram: ${username}`);
-      // Тут можна додати логіку для відправки інформації адміну або на сервер
+    }
+
+    function sendToTelegram(username) {
+      const message = `Нове замовлення:
+        Зірки: ${selectedStars}
+        Ціна: ${selectedPrice} грн
+        Telegram юзернейм: ${username}`;
+      
+      const token = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // Токен вашого бота
+      const chatId = '@fgprivatezamovlenay'; // Ваш chat_id для отримання повідомлень
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
     }
   </script>
 </body>
