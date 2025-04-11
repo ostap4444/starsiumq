@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Starsium Shop</title>
+  <title>Starsium Shop - Premium</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -49,18 +49,51 @@
       background: gold;
       color: black;
     }
+    .section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      margin-top: 3rem;
+      border-radius: 1.5rem;
+      max-width: 500px;
+      width: 90%;
+    }
+    .section h2 {
+      color: gold;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .option-button {
+      background: #24243e;
+      border: 1px solid #888;
+      border-radius: 0.75rem;
+      padding: 0.8rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .option-button:hover {
+      background: #444;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Купити Premium підписку</h1>
+    <h1>Starsium - Premium</h1>
+    <p style="font-size: 1.2rem; color: #ccc">Ваш магазин зірок та Premium підписок</p>
   </header>
 
   <div class="buttons">
     <button onclick="window.location.href='index.html'">⬅️ Повернутись в меню</button>
+    <button onclick="scrollToSection('premium')">💎 Купити Premium</button>
   </div>
 
-  <div class="section">
+  <div class="section" id="premium">
     <h2>Оберіть підписку Premium</h2>
     <div class="options">
       <div class="option-button" onclick="submitPremiumOrder('3 місяці', 610)">3 місяці – 610 грн</div>
@@ -74,6 +107,12 @@
   </footer>
 
   <script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Для преміум підписки
     function submitPremiumOrder(duration, price) {
       const username = prompt(`Введіть ваш Telegram юзернейм для підписки на ${duration} (${price} грн)`);
       if (!username) {
@@ -85,15 +124,14 @@
     }
 
     function sendPremiumToTelegram(username, duration, price) {
-      const message = `Нове Premium замовлення:\n
-        Підписка: ${duration}\n
-        Ціна: ${price} грн\n
+      const message = `Нове Premium замовлення:
+        Підписка: ${duration}
+        Ціна: ${price} грн
         Telegram юзернейм: ${username}`;
 
       const token = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // Токен вашого бота
       const chatId = '@fgprivatezamovlenay'; // Ваш chat_id для отримання повідомлень
 
-      // Запит до Telegram API
       fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`, {
         method: 'GET'
       })
@@ -105,9 +143,7 @@
             console.error('Помилка при відправці повідомлення:', data);
           }
         })
-        .catch(error => {
-          console.error('Помилка при запиті до Telegram API:', error);
-        });
+        .catch(error => console.error('Помилка при запиті до Telegram API:', error));
     }
   </script>
 </body>
