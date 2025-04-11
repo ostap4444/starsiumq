@@ -34,7 +34,7 @@
       width: 90%;
       max-width: 400px;
     }
-    button {
+    .button {
       background: #1e1e2f;
       border: 2px solid gold;
       color: white;
@@ -44,8 +44,9 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      text-align: center;
     }
-    button:hover {
+    .button:hover {
       background: gold;
       color: black;
     }
@@ -62,28 +63,31 @@
       color: gold;
       font-size: 2rem;
       margin-bottom: 1rem;
+      text-align: center;
     }
     .options {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1rem;
     }
-    .option-button {
+    .option {
       background: #24243e;
       border: 1px solid #888;
       border-radius: 0.75rem;
-      padding: 0.8rem 1rem;
+      padding: 1rem;
       text-align: center;
       cursor: pointer;
       transition: 0.3s;
     }
-    .option-button:hover {
+    .option:hover {
       background: #444;
     }
     footer {
       margin-top: auto;
       padding: 2rem;
+      text-align: center;
       color: #aaa;
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -94,16 +98,16 @@
   </header>
 
   <div class="buttons">
-    <button onclick="window.location.href='index.html'">⬅️ Повернутись в меню</button>
-    <button onclick="scrollToSection('premium')">💎 Купити Premium</button>
+    <div class="button" onclick="window.location.href='index.html'">⬅️ Повернутись в меню</div>
+    <div class="button" onclick="scrollToSection('premium')">💎 Купити Premium</div>
   </div>
 
   <div class="section" id="premium">
     <h2>Оберіть підписку Premium</h2>
     <div class="options">
-      <div class="option-button" onclick="submitPremiumOrder('3 місяці', 610)">3 місяці – 610 грн</div>
-      <div class="option-button" onclick="submitPremiumOrder('6 місяців', 850)">6 місяців – 850 грн</div>
-      <div class="option-button" onclick="submitPremiumOrder('1 рік', 1500)">1 рік – 1500 грн</div>
+      <div class="option" onclick="submitOrder('Premium 3 місяці', 610)">3 місяці – 610 грн</div>
+      <div class="option" onclick="submitOrder('Premium 6 місяців', 850)">6 місяців – 850 грн</div>
+      <div class="option" onclick="submitOrder('Premium 1 рік', 1500)">1 рік – 1500 грн</div>
     </div>
   </div>
 
@@ -117,45 +121,32 @@
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function submitPremiumOrder(duration, price) {
-      let username = prompt(`Введіть ваш Telegram юзернейм (починається з @):`);
-      if (!username || !username.startsWith('@')) {
-        alert('Будь ласка, введіть коректний Telegram юзернейм, який починається з @');
+    function submitOrder(product, price) {
+      const username = prompt(`Введіть ваш Telegram юзернейм для замовлення ${product} (${price} грн):`);
+      if (!username) {
+        alert('Будь ласка, введіть ваш Telegram юзернейм!');
         return;
       }
 
-      const confirmText = `Підтвердити покупку Premium на ${duration} за ${price} грн?`;
-      if (!confirm(confirmText)) return;
+      const message = `🔔 НОВЕ ЗАМОВЛЕННЯ\n\n📦 Товар: ${product}\n💸 Ціна: ${price} грн\n👤 Користувач: @${username}`;
 
-      const message = `🔥 НОВЕ PREMIUM ЗАМОВЛЕННЯ:\n\n💎 Підписка: ${duration}\n💰 Ціна: ${price} грн\n👤 Юзер: ${username}`;
+      const token = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24';
+      const chatId = '@fgprivatezamovlenay';
 
-      const botToken = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // заміни на свій
-      const chatId = '@fgprivatezamovlenay'; // або числовий chat_id
-
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: 'Markdown'
+      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            alert(`✅ Замовлення оформлено! З вами зв'яжуться в Telegram: @${username}`);
+          } else {
+            alert('❌ Помилка при відправці замовлення. Спробуйте ще раз.');
+            console.error(data);
+          }
         })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.ok) {
-          alert(`Замовлення успішно надіслано! Очікуйте повідомлення в Telegram від @StarsiumBot або менеджера.`);
-        } else {
-          alert('Сталася помилка при відправці. Перевір токен або чат ID.');
-          console.error(data);
-        }
-      })
-      .catch(error => {
-        alert('Помилка з’єднання з Telegram API');
-        console.error(error);
-      });
+        .catch(error => {
+          alert('⚠️ Сталася помилка. Перевірте зʼєднання.');
+          console.error(error);
+        });
     }
   </script>
 </body>
