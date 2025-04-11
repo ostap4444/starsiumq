@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Купити Premium - Starsium Shop</title>
+  <title>Starsium Shop</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -85,15 +85,29 @@
     }
 
     function sendPremiumToTelegram(username, duration, price) {
-      const message = `Нове Premium замовлення:
-        Підписка: ${duration}
-        Ціна: ${price} грн
+      const message = `Нове Premium замовлення:\n
+        Підписка: ${duration}\n
+        Ціна: ${price} грн\n
         Telegram юзернейм: ${username}`;
-      
+
       const token = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // Токен вашого бота
       const chatId = '@fgprivatezamovlenay'; // Ваш chat_id для отримання повідомлень
 
-      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
+      // Запит до Telegram API
+      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`, {
+        method: 'GET'
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            console.log('Повідомлення надіслано');
+          } else {
+            console.error('Помилка при відправці повідомлення:', data);
+          }
+        })
+        .catch(error => {
+          console.error('Помилка при запиті до Telegram API:', error);
+        });
     }
   </script>
 </body>
