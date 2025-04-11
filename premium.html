@@ -104,7 +104,9 @@
   <div class="section">
     <h2>Обери опцію Premium</h2>
     <div class="options">
-      <div class="option-button" onclick="selectPremium('Telegram Premium')">Telegram Premium – 200 грн</div>
+      <div class="option-button" onclick="selectPremium('3 місяці', 610)">3 місяці – 610 грн</div>
+      <div class="option-button" onclick="selectPremium('6 місяців', 850)">6 місяців – 850 грн</div>
+      <div class="option-button" onclick="selectPremium('1 рік', 1500)">1 рік – 1500 грн</div>
     </div>
 
     <div class="input-container">
@@ -120,11 +122,12 @@
 
   <script>
     let selectedPremium = '';
-    let selectedPrice = 200; // Вартість Premium
+    let selectedPrice = 0;
 
-    function selectPremium(premium) {
+    function selectPremium(premium, price) {
       selectedPremium = premium;
-      alert(`Ви вибрали: ${premium}. Ціна: ${selectedPrice} грн`);
+      selectedPrice = price;
+      alert(`Ви вибрали: ${premium}. Ціна: ${price} грн`);
     }
 
     function submitPremium() {
@@ -139,8 +142,9 @@
 
     function sendToTelegram(username) {
       const message = `Нове замовлення:
-        Telegram Premium
-        Юзернейм: ${username}`;
+        Premium: ${selectedPremium}
+        Юзернейм: ${username}
+        Ціна: ${selectedPrice} грн`;
 
       const token = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // Токен вашого бота
       const chatId = '@fgprivatezamovlenay'; // Ваш chat_id для отримання повідомлень
