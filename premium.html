@@ -80,6 +80,11 @@
     .option-button:hover {
       background: #444;
     }
+    footer {
+      margin-top: auto;
+      padding: 2rem;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
@@ -112,38 +117,45 @@
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Для преміум підписки
     function submitPremiumOrder(duration, price) {
-      const username = prompt(`Введіть ваш Telegram юзернейм для підписки на ${duration} (${price} грн)`);
-      if (!username) {
-        alert('Будь ласка, введіть ваш Telegram юзернейм!');
+      let username = prompt(`Введіть ваш Telegram юзернейм (починається з @):`);
+      if (!username || !username.startsWith('@')) {
+        alert('Будь ласка, введіть коректний Telegram юзернейм, який починається з @');
         return;
       }
-      sendPremiumToTelegram(username, duration, price);
-      alert(`Підписка на ${duration} підтверджена! З вами зв'яжуться через Telegram: ${username}`);
-    }
 
-    function sendPremiumToTelegram(username, duration, price) {
-      const message = `Нове Premium замовлення:
-        Підписка: ${duration}
-        Ціна: ${price} грн
-        Telegram юзернейм: ${username}`;
+      const confirmText = `Підтвердити покупку Premium на ${duration} за ${price} грн?`;
+      if (!confirm(confirmText)) return;
 
-      const token = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // Токен вашого бота
-      const chatId = '@fgprivatezamovlenay'; // Ваш chat_id для отримання повідомлень
+      const message = `🔥 НОВЕ PREMIUM ЗАМОВЛЕННЯ:\n\n💎 Підписка: ${duration}\n💰 Ціна: ${price} грн\n👤 Юзер: ${username}`;
 
-      fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`, {
-        method: 'GET'
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.ok) {
-            console.log('Повідомлення надіслано');
-          } else {
-            console.error('Помилка при відправці повідомлення:', data);
-          }
+      const botToken = '7891045650:AAEDuF4YzDWqsiqoNy92pCTNDh1wYk2so24'; // заміни на свій
+      const chatId = '@fgprivatezamovlenay'; // або числовий chat_id
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'Markdown'
         })
-        .catch(error => console.error('Помилка при запиті до Telegram API:', error));
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) {
+          alert(`Замовлення успішно надіслано! Очікуйте повідомлення в Telegram від @StarsiumBot або менеджера.`);
+        } else {
+          alert('Сталася помилка при відправці. Перевір токен або чат ID.');
+          console.error(data);
+        }
+      })
+      .catch(error => {
+        alert('Помилка з’єднання з Telegram API');
+        console.error(error);
+      });
     }
   </script>
 </body>
